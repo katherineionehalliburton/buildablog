@@ -2,9 +2,9 @@
 
 {% block content %}
     <h1>My Blogs</h1>
-    <form method='post'>
+    <form method='POST'>
         <label>
-            New Blog:
+            Blog Title:
             <input type="text" name='blog' />
         </label>
         <textarea name="text">{Enter text.}</textarea>
@@ -20,10 +20,7 @@
         <ul>
             {% for blog in blogs %}
             <li>{{blog.name}}
-                <form method="POST" action="/" style="display:inline-block;">
-                    <input type="hidden" name="blog-id" value="{{blog.id}}" />
-                    <input type="submit" value="Finish!" />
-                </form>
+                <form method="POST" action="/" style="display:inline-block;"></form>
             </li>
             {% endfor %}
         </ul>
@@ -31,3 +28,4 @@
     {% endif %}
 
     <hr />
+{% endblock %}
