@@ -12,48 +12,46 @@ class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
-    completed = db.Column(db.Boolean)
+    body = db.Column(db.String(120))
 
-    def __init__(self, name):
+    def __init__(self, name, body):
         self.name = name
-        self.completed = False
-
-class User(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(120))
-
-    def __init__(self, email, password):
-        self.email = email
-        self.password = password
+        self.body = body
 
 
-@app.route('/new_post', methods=['POST', 'GET'])
-def index():
-    
+@app.route('/newpost', methods=['POST', 'GET'])
+def new_post():
+    name = ""
+    body = ""
     if request.method == 'POST':
-        blog_name = request.form['blog']
-        new_blog = Blog(blog_name)
-        db.session.add(new_blog)
-        db.session.commit()
+        name = request.form['name']
+        body = request.form['body']
+        error = False
+        if not name:
+            flash("Blog must have a Title!", 'error')
+            error = True
+        if not body:
+            flash("Blog must have a Body!", 'error')
+            error = True
+        if not error:
+            blog = Blog(name,body)
+            db.session.add(blog)
+            db.session.commit()
+            return redirect('/blogs?id={0}'.format(blog.id))
+    blogs = Blog.query.all()
+    return render_template('newpost.html',title="New Post", 
+        blogs=blogs)
 
-    blogs = Blog.query.filter_by(completed=False).all()
-    completed_blogs = Blog.query.filter_by(completed=True).all()
-    return render_template('blogs.html',title="My Blogs", 
-        blogs=blogs, completed_blogs=completed_blogs)
 
-
-@app.route('/blog', methods=['POST'])
-def finished_blog():
-
-    blog_id = int(request.form['blog-id'])
-    blog = Blog.query.get(blog_id)
-    blog.completed = True
-    db.session.add(blog)
-    db.session.commit()
-
-    return redirect('/')
+@app.route('/blogs')
+def all_blogs():
+    blogid = request.args.get('id')
+    if blogid:
+        blogid = int(blogid)
+        blogs = Blog.query.get(blogid)
+        return render_template('ind_post.html', blogs=blogs)         
+    blogs = Blog.query.all()
+    return render_template('blogs.html', title="My Blogs", blogs=blogs)
 
 
 if __name__ == '__main__':

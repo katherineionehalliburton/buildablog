@@ -2,30 +2,24 @@
 
 {% block content %}
     <h1>My Blogs</h1>
-    <form method='POST'>
-        <label>
-            Blog Title:
-            <input type="text" name='blog' />
-        </label>
-        <textarea name="text">{Enter text.}</textarea>
-        <input type="submit" value='Add Blog' />
-    </form>
+    <a href='/newpost'>Make New Post</a>
 
     <hr />
 
-    {% if blogs|length == 0 %}
-    <p>No blogs yet</p>
-    {% else %}
+        {% if blogs|length == 0 %}
+        <p>No blogs yet</p>
+        {% else %}
 
-        <ul>
-            {% for blog in blogs %}
-            <li>{{blog.name}}
-                <form method="POST" action="/" style="display:inline-block;"></form>
-            </li>
-            {% endfor %}
-        </ul>
+            <ul>
+                {% for blog in blogs %}
+                <li>
+                    <a href="/blogs?id={{blog.id}}">{{blog.name}}</a>
+                    {{blog.body}}
+                </li>
+                {% endfor %}
+            </ul>
 
-    {% endif %}
+        {% endif %}
 
     <hr />
 {% endblock %}
